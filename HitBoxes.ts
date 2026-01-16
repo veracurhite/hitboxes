@@ -85,5 +85,24 @@ namespace hitboxes {
         }
         return null
     }
-
+    //% blockId=on_hitbox_collide
+    //% block="On the hitbox of $sprite of kind $kind hits the hitbox of $otherSprite of kind $kind2 do"
+    //% kind.shadow=spritekind
+    //% kind2.shadow=spritekind
+    //% thendo.handlerStatement=1
+    //% draggableParameters="reporter"
+    export function onHitboxCollide(kind: number, kind2: number, thendo: (sprite: Sprite, otherSprite: Sprite) => void){
+        game.onUpdate(function(){
+        for(let b of sprites.allOfKind(kind)){
+            for(let h of sprites.allOfKind(kind2)){
+                if(b==h){
+                    continue
+                }
+                if(hitboxes.areHitting(b,h)){
+                    thendo(b,h)
+                }
+            }
+            }
+        })
+    }
 }
