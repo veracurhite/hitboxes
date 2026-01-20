@@ -17,7 +17,7 @@ enum Data {
     Height
 }
 //% block="Hitboxes"
-//% color=#00aa00
+//% color=#00aa44
 //% icon="\uf096"
 namespace hitboxes {
     //% block="Create a hitbox for sprite $sprite"
