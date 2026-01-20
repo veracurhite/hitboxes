@@ -12,7 +12,7 @@ namespace hitboxes {
         spritesWithHitboxes.push(sprite)
         hitBoxesForSprites.push([0,0,sprite.width,sprite.height])
     }
-    //% block="Set the parameters of the hit box of $sprite to offsets x $xoff y $yoff width $w height $h"
+    //% block="Set parameters of hit box of $sprite to offsets x $xoff y $yoff width $w height $h"
     export function setParameters(sprite: Sprite, xoff: number, yoff: number, w: number, h: number){
         if (spritesWithHitboxes.indexOf(sprite) == -1) {
             throw "Sprite doesn't have a hitbox yet"
