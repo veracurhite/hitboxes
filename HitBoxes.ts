@@ -1,10 +1,27 @@
 let spritesWithHitboxes: Array<Sprite> = []
 let hitBoxesForSprites: Array<Array<number>> = []
+enum Parameter {
+    XOffset,
+    YOffset,
+    Width,
+    Height
+}
+enum Data {
+    Left,
+    Right,
+    Top,
+    Bottom,
+    XOffset,
+    YOffset,
+    Width,
+    Height
+}
 //% block="Hitboxes"
 //% color=#00aa00
 //% icon="\uf096"
 namespace hitboxes {
     //% block="Create a hitbox for sprite $sprite"
+    //% sprite.defl=mySprite
     export function create(sprite: Sprite){
         if(spritesWithHitboxes.indexOf(sprite)!=-1){
             throw "Sprite already has a hitbox"
@@ -13,6 +30,7 @@ namespace hitboxes {
         hitBoxesForSprites.push([0,0,sprite.width,sprite.height])
     }
     //% block="Set parameters of hit box of $sprite to offsets x $xoff y $yoff width $w height $h"
+    //% sprite.defl=mySprite
     export function setParameters(sprite: Sprite, xoff: number, yoff: number, w: number, h: number){
         if (spritesWithHitboxes.indexOf(sprite) == -1) {
             throw "Sprite doesn't have a hitbox yet"
@@ -20,6 +38,8 @@ namespace hitboxes {
         hitBoxesForSprites[spritesWithHitboxes.indexOf(sprite)]=[xoff,yoff,w,h]
     }
     //% block="Is $hittingsprite hitting the hitbox of $sprite"
+    //% sprite.defl=mySprite
+    //% hittingsprite.defl=mySprite
     export function isHitting(hittingsprite: Sprite, sprite: Sprite){
         let hitbox: Array<number> = hitBoxesForSprites[spritesWithHitboxes.indexOf(sprite)]
         let x = sprite.left-hitbox[0]
@@ -32,6 +52,8 @@ namespace hitboxes {
             hittingsprite.top < y + h    
         }
     //% block="Is the hitbox of $hittingsprite hitting the hitbox of $sprite"
+    //% sprite.defl=mySprite
+    //% hittingsprite.defl=mySprite
     export function areHitting(hittingsprite: Sprite, sprite: Sprite){
         let hitbox: Array<number> = hitBoxesForSprites[spritesWithHitboxes.indexOf(sprite)]
         let x = sprite.left - hitbox[0]
@@ -49,6 +71,8 @@ namespace hitboxes {
             hy < y + h
     }
     //% block="Get the side the hitbox $hittingsprite is hitting the hitbox of $sprite"
+    //% sprite.defl=mySprite
+    //% hittingsprite.defl=mySprite
     export function getSideOfCollision(hittingsprite: Sprite, sprite: Sprite): string {
         if (hitboxes.areHitting(hittingsprite, sprite)) {
             let hitbox: Array<number> = hitBoxesForSprites[spritesWithHitboxes.indexOf(sprite)]
@@ -104,5 +128,52 @@ namespace hitboxes {
             }
             }
         })
+    }
+    //% block="Change the parameter $param for hitbox of $sprite by $inc pixels over $time seconds"
+    //% sprite.defl=mySprite
+    export function increaseSmooth(param: Parameter, sprite: Sprite, inc: number, time: number){
+        let change = inc/(time*10)
+        let idx: number
+        if(param==Parameter.XOffset){
+            idx=0
+        }else if(param==Parameter.YOffset){
+            idx = 1
+        }else if(param==Parameter.Width){
+            idx = 2
+        }else if(param==Parameter.Height){
+            idx = 3
+        }
+        game.onUpdateInterval(100, function () {
+            let hitbox = hitBoxesForSprites[spritesWithHitboxes.indexOf(sprite)]
+            hitbox[idx] += change
+        })
+    }
+    //% block="Get $data of the hitbox of $sprite"
+    //% sprite.defl=mySprite
+    export function getData(data: Data, sprite: Sprite): number{
+        let hitbox = hitBoxesForSprites[spritesWithHitboxes.indexOf(sprite)]
+        if(data==Data.Left){
+            return sprite.left-hitbox[0]
+        }else if(data==Data.Right){
+            return sprite.left-hitbox[0]+hitbox[2]
+        }else if(data==Data.Top){
+            return sprite.top-hitbox[1]
+        }else if(data==Data.Bottom) {
+            return sprite.top-hitbox[1]+hitbox[3]
+        }else if(data==Data.XOffset){
+            return hitbox[0]
+        } else if (data == Data.YOffset) {
+            return hitbox[1]
+        }else if(data==Data.Width){
+            return hitbox[2]
+        }else{
+            return hitbox[3]
+        }
+    }
+    //% block="Remove hitbox from $sprite"
+    //% sprite.defl=mySprite
+    export function remove(sprite: Sprite): void{
+        hitBoxesForSprites.removeAt(spritesWithHitboxes.indexOf(sprite))
+        spritesWithHitboxes.removeAt(spritesWithHitboxes.indexOf(sprite))
     }
 }
